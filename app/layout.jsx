@@ -1,27 +1,27 @@
-"use client"
 import '../styles/globals.css'
 import Nav from "../components/Nav";
-import {AuthContextProvider} from "/home/pranjaladwani12/next_full_stack_servicenow/app/context/AuthContext.js";
+import Provider from "../components/Provider";
 
 
-// export const metadata = {
-//   title: "Promptopia",
-//   description: "Discover & Share AI Prompts",
-// };
+export const metadata = {
+  title: "Promptopia",
+  description: "Discover & Share AI Prompts",
+};
 
 const RootLayout = ({children}) => (
   
   <html lang='en'>
     <body>
-    <AuthContextProvider>
+    <Provider>
         <div className='main'>
           <div className='gradient' />
         </div>
+
         <main className='app'>
         <Nav/>
           {children}
         </main>
-        </AuthContextProvider>
+        </Provider>
     </body>
   </html>
   
