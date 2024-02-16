@@ -2,21 +2,38 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import {useState,useEffect} from 'react';
-import {signIn, signOut,useSession,getProviders} from 'next-auth/react';
+import {UserAuth} from "/home/pranjaladwani12/next_full_stack_servicenow/app/context/AuthContext.js"
 
 
 const Nav = () => {
-   const {data:session}=useSession();
-    const [providers, setProviders] = useState(null);
-    const [isToggle, setToggle]=useState(false);
-   useEffect(() => {
-    const isUserLoggedIn=false;
-    const setUpProviders = async()=>{
-        const response=await getProviders();
-        setProviders(response);
+    const {user,googleSignIn,logOut}=UserAuth();
+    const [toggleDropdown, setToggleDropdown] = useState(false);
+  //  useEffect(() => {
+  //   const isUserLoggedIn=false;
+  //   const setUpProviders = async()=>{
+  //       const response=await getProviders();
+  //       setProviders(response);
+  //   }
+  //   setUpProviders();
+  //  },[]);
+  console.log(user);
+   const handleSignIn=async()=>{
+      try{
+        await googleSignIn();
+      }
+      catch(error){
+        console.log(error);
+      }
+   }
+
+   const handleSignOut=async()=>{
+    try{
+      await logOut();
     }
-    setUpProviders();
-   },[]);
+    catch(error){
+      console.log(error);
+    }
+   }
   return (
 
     <nav className="flex-between w-full mb-16 pt-3 ">
@@ -32,23 +49,23 @@ const Nav = () => {
         {/* {console.log(providers)} */}
         {/* //Desktop navigation */}
         <div className="sm:flex hidden">
-            {session?.user ? (
+            {user ? (
                 <div className="flex gap-3 md:gap-5">
                     
                     
                    
                         {/* Mount the UserButton component */}
-                        <Link href="/create-prompt" className="black_btn">
+                        <Link href="/" className="black_btn">
                          Create Post
                        </Link>
-                       <button type='button' onClick={signOut} className='outline_btn'>
+                       <button type='button' className='outline_btn' onClick={handleSignOut}>
                         Sign Out
                         </button>
                         {/* <Link href="/profile"> */}
                         < >
                         <Link href='/profile'>
                         <Image
-                            src={session?.user.image}
+                            src={user?.photoURL}
                             width={37}
                             height={37}
                             className='rounded-full'
@@ -61,37 +78,46 @@ const Nav = () => {
                 
             ):
            ( <div>
-              {providers &&
-              Object.values(providers).map((provider) => (
+                
+                <div className='flex gap-3 md:gap-5'>
                 <button
                   type='button'
-                  key={provider.name}
-                  onClick={() => {
-                    signIn(provider.id);
-                  }}
+                  // key={provider.name}
+                  onClick={handleSignIn}
                   className='black_btn'
                 >
-                  Sign in
+                  Login in
                 </button>
-              ))} 
+                <button
+                  type='button'
+                  // key={provider.name}
+                  onClick={handleSignIn}
+                  className='black_btn'
+                >
+                  Sign Up
+                </button>
+                </div>
+             
             </div>)}
         </div>
 
         {/* //mobile view */}
         <div className="sm:hidden flex relative">
-            {session?.user ?(
+            {user ?(
                <div>
                 
                         
                         {/* Mount the UserButton component */}
-                        <Image src={session?.user.image}
+                        <Image
+                            src={user?.photoURL}
                             width={37}
                             height={37}
                             className='rounded-full'
-                            alt="profile"
-                            onClick={() =>setToggle(!isToggle)}
-                        ></Image>
-                        {isToggle && (
+                            alt='profile'
+                            onClick={() => setToggleDropdown(!toggleDropdown)}
+                      />
+
+                        {toggleDropdown && (
               <div className='dropdown'>
                 <Link
                   href='/profile'
@@ -109,10 +135,7 @@ const Nav = () => {
                 </Link>
                 <button
                   type='button'
-                  onClick={() => {
-                    setToggleDropdown(false);
-                    signOut();
-                  }}
+                  onClick={handleSignOut}
                   className='mt-5 w-full black_btn'
                 >
                   Sign Out
@@ -126,19 +149,24 @@ const Nav = () => {
                 
             ):
            ( <div>
-               {providers &&
-              Object.values(providers).map((provider) => (
+               <div className='flex gap-3 md:gap-5'>
                 <button
                   type='button'
-                  key={provider.name}
-                  onClick={() => {
-                    signIn(provider.id);
-                  }}
+                  // key={provider.name}
+                  onClick={handleSignIn}
                   className='black_btn'
                 >
-                  Sign in
+                  Login in
                 </button>
-              ))}
+                <button
+                  type='button'
+                  // key={provider.name}
+                  onClick={handleSignIn}
+                  className='black_btn'
+                >
+                  Sign Up
+                </button>
+                </div>
             </div>)}
         </div>
     </nav>
